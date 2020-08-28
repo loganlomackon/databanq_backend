@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpHeaders;
+import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
@@ -14,24 +14,22 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.Gson;
-import com.rbc.databanqbackend.restful.dto.baasid.BaasIdLoginResDTO;
+import com.rbc.databanqbackend.exception.BizException;
+
 
 @Service
 public class HttpClientService {
-
-	private static final String LOGIN_URL = "http://220.133.169.222:8080/auth/realms/dev/protocol/openid-connect/token";
-	private static final String BUCKET_URL = "http://220.133.169.222:19191";
 	
-	public String sendPost(String path, Map<String, String> form) throws Exception {
+	public String sendPost(String path, Map<String, String> form) throws BizException,Exception {
 		return sendPost(path, new HashMap<String,String>(), form);
 	}
-	public String sendPost(String path, Map<String, String> headers, Map<String, String> form) throws Exception {
+	public String sendPost(String path, Map<String, String> headers, Map<String, String> form) throws BizException,Exception {
 		HttpPost post = new HttpPost(path);
 		RequestConfig defaultConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
 		post.setConfig(defaultConfig);
@@ -48,13 +46,14 @@ public class HttpClientService {
 		String res = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 		client.close();
 		    
+		System.out.println("POST:"+res);
 		//logger.info("POST:"+path+"::"+content+"  ;; response:"+res);
 		if (status != 200)
-			throw new Exception(String.valueOf(status)+":"+res);
+			throw new BizException(String.valueOf(status)+":"+res);
 		    
 		return res;
 	}
-	public String sendGet(String path, Map<String,String> headers) throws Exception {
+	public String sendGet(String path, Map<String,String> headers) throws BizException,Exception {
 		CloseableHttpClient client = HttpClients.createDefault();
 		HttpGet get = new HttpGet(path);
 		for (String key : headers.keySet()) {
@@ -66,35 +65,36 @@ public class HttpClientService {
 		String res = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 		client.close();
 		
+		System.out.println("GET:"+res);
 		//logger.info("GET:"+path+" ;; Response:"+content);
-		
 		if (status != 200)
-			throw new Exception(String.valueOf(status));
+			throw new BizException(String.valueOf(status)+":"+res);
+		return res;
+	}
+	public String sendPut(String path, Map<String,String> headers, HttpEntity entity) throws BizException,Exception {
+		CloseableHttpClient client = HttpClients.createDefault();
+		HttpPut put = new HttpPut(path);
+		for (String key : headers.keySet()) {
+			put.addHeader(key, headers.get(key));
+		}
+		if (entity != null) {
+			put.setEntity(entity);
+		}
+		
+		CloseableHttpResponse response = client.execute(put);
+		int status = response.getStatusLine().getStatusCode();
+		String res = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+		client.close();
+		
+		System.out.println("PUT:"+res);
+		//logger.info("GET:"+path+" ;; Response:"+content);
+		if (status != 200 && status != 201)
+			throw new BizException(String.valueOf(status)+":"+res);
 		return res;
 	}
 	
-	public String loginBaasId() throws Exception {
-		 Map<String, String> form = new HashMap<String, String>();
-		 form.put("client_id", "honglo");
-		 form.put("grant_type", "password");
-		 form.put("username", "fanchuang");
-		 form.put("password", "honglo@baasid");
-		 
-		 String content = sendPost(LOGIN_URL, form);
-		 System.out.println("res:"+content);
-		 Gson gson = new Gson();
-		 BaasIdLoginResDTO resDTO = gson.fromJson(content, BaasIdLoginResDTO.class);
-		 return resDTO.getAccess_token();
-	}
 	
-	public String getBaasIdBucketList(String token) throws Exception {
-		Map<String,String> headers = new HashMap<String,String>();
-		headers.put(HttpHeaders.AUTHORIZATION, "Bearer "+token);
-		String content = sendGet(BUCKET_URL, headers);
-		
-		System.out.println("res:"+content);
-		return content;
-	}
+
 	
 	
 }
