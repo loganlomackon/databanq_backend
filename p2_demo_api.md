@@ -115,6 +115,7 @@ Name | Mandatory | Description
 from_did | YES | Device sender DID.
 to_did | YES | Device receiver DID.
 device_did | YES | Device DID.
+tx_id | YES | Transaction ID.
 
 **Response RESULT:**
 ```
@@ -147,7 +148,8 @@ If auth is implemented, user_did will be removed.
     {
       timestamp: "12345678",
       "from_did": "abc123",
-      "to_did": "xyz123"
+      "to_did": "xyz123",
+      "tx_id": "abcxyz"
     }
   ]
 }
