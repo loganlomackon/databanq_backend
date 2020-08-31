@@ -112,8 +112,8 @@ Transfer ownership of a device to another user.
 
 Name | Mandatory | Description
 ------------ | ------------ | ------------
-sender_did | YES | Device sender DID.
-receiver_did | YES | Device receiver DID.
+from_did | YES | Device sender DID.
+to_did | YES | Device receiver DID.
 device_did | YES | Device DID.
 
 **Response RESULT:**
@@ -128,7 +128,7 @@ device_did | YES | Device DID.
 ```
 POST /api/device/transfer_history
 ```
-Transfer ownership of a device to another user.
+Check ownership transfer history of a device.
 
 **Parameters:**
 
@@ -137,10 +137,19 @@ Name | Mandatory | Description
 user_did | YES | User DID.
 device_did | YES | Device DID.
 
+TODO: There is no auth mechanism to check current user now. 
+If auth is implemented, user_did will be removed.
+
 **Response RESULT:**
 ```
 {
-  "history": "Factory->A; A->B;"
+  "history": [
+    {
+      timestamp: "12345678",
+      "from_did": "abc123",
+      "to_did": "xyz123"
+    }
+  ]
 }
 ```
 
