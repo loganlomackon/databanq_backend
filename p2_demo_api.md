@@ -147,9 +147,18 @@ If auth is implemented, user_did will be removed.
   "history": [
     {
       timestamp: "12345678",
-      "from_did": "abc123",
-      "to_did": "xyz123",
-      "tx_id": "abcxyz"
+      "tx_id": "abcxyz",
+      
+      "from_user": {
+        "did": "abc123",
+        "phone": "0911222333",
+        "email": "abc@gmail.com",
+      },
+      "to_user": {
+        "did": "xyz123",
+        "phone": "0944555666",
+        "email": "xyz@gmail.com",
+      },
     }
   ]
 }
