@@ -75,6 +75,22 @@ did | YES | User DID.
 }
 ```
 
+### Delete
+```
+Delete /api/user
+```
+Delete with DID.
+
+**Parameters:**
+
+Name | Mandatory | Description
+------------ | ------------ | ------------
+did | YES | User DID.
+
+**Response RESULT:**
+200 OK
+
+
 ## Pairing endpoints
 ### Pairing
 ```
@@ -102,6 +118,22 @@ device_name | NO | Device name.
 ```
 
 ## Device endpoints
+### Delete
+```
+Delete /api/device
+```
+Delete with DID.
+
+**Parameters:**
+
+Name | Mandatory | Description
+------------ | ------------ | ------------
+did | YES | Device DID.
+
+**Response RESULT:**
+200 OK
+
+
 ### Transfer
 ```
 POST /api/device/transfer
