@@ -1,4 +1,4 @@
-package com.rbc.databanqbackend.utils;
+package com.rbc.databanqbackend.util;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;

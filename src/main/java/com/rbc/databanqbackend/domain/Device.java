@@ -13,10 +13,8 @@ public class Device {
 	private String deviceName;
 	//Integer deviceID
 	
-	private String history;
-	 
-	private List<DevicePairedUser> pairedUsers;
-	
+	private List<TransferHistory> history;
+
 	public Device() {
 	}
 
@@ -55,20 +53,22 @@ public class Device {
 		this.deviceName = deviceName;
 	}
 
-	public String getHistory() {
+	public List<TransferHistory> getHistory() {
+		if (history == null)
+			history = new ArrayList<TransferHistory>();
 		return history;
 	}
-	public void setHistory(String history) {
+	public void setHistory(List<TransferHistory> history) {
 		this.history = history;
 	}
-
-	public List<DevicePairedUser> getPairedUsers() {
-		if (pairedUsers == null)
-			pairedUsers = new ArrayList<DevicePairedUser>();
-		return pairedUsers;
-	}
-	public void setPairedUsers(List<DevicePairedUser> pairedUsers) {
-		this.pairedUsers = pairedUsers;
+	
+	public String getOwnerDid() {
+		List<TransferHistory> historyNow = getHistory();
+		if (historyNow.size() == 0) {
+			return null;
+		}
+		
+		return historyNow.get(historyNow.size()-1).getToDid();
 	}
 
 }

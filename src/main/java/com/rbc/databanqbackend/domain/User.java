@@ -44,4 +44,13 @@ public class User {
 		this.pairedDevices = pairedDevices;
 	}
 	
+	public UserPairedDevice getPairByDeviceDid(String deviceDid) {
+		for (UserPairedDevice p : getPairedDevices()) {
+			if (p.getDeviceDid().equals(deviceDid)) {
+				return p;
+			}
+		}
+		return null;
+	}
+	
 }

@@ -12,6 +12,7 @@ import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -71,7 +72,7 @@ public class HttpClientService {
 			throw new BizException(String.valueOf(status)+":"+res);
 		return res;
 	}
-	public String sendPut(String path, Map<String,String> headers, HttpEntity entity) throws BizException,Exception {
+	public String sendPut(String path, Map<String,String> headers, HttpEntity entity) throws BizException, Exception {
 		CloseableHttpClient client = HttpClients.createDefault();
 		HttpPut put = new HttpPut(path);
 		for (String key : headers.keySet()) {
@@ -92,7 +93,22 @@ public class HttpClientService {
 			throw new BizException(String.valueOf(status)+":"+res);
 		return res;
 	}
-	
+	public void sendDelete(String path, Map<String,String> headers) throws BizException, Exception {
+		CloseableHttpClient client = HttpClients.createDefault();
+		HttpDelete del = new HttpDelete(path);
+		for (String key : headers.keySet()) {
+			del.addHeader(key, headers.get(key));
+		}
+		
+		CloseableHttpResponse response = client.execute(del);
+		int status = response.getStatusLine().getStatusCode();
+		String res = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+		client.close();
+		
+		//logger.info("GET:"+path+" ;; Response:"+content);
+		if (status != 200)
+			throw new BizException(String.valueOf(status)+":"+res);
+	}
 	
 
 	

@@ -19,13 +19,17 @@ public class UserDTO implements Serializable {
 	}
 	
 	public static UserDTO createDTO(User u) {
+		UserDTO dto = createSimpleDTO(u);
+		for (UserPairedDevice p : u.getPairedDevices()) {
+			dto.getPaired_devices().add(UserPairedDeviceDTO.createDTO(p));
+		}
+		return dto;
+	}
+	public static UserDTO createSimpleDTO(User u) {
 		UserDTO dto = new UserDTO();
 		dto.setDid(u.getDid());
 		dto.setEmail(u.getEmail());
 		dto.setPhone(u.getPhone());
-		for (UserPairedDevice p : u.getPairedDevices()) {
-			dto.getPaired_devices().add(UserPairedDeviceDTO.createDTO(p));
-		}
 		return dto;
 	}
 	public User convertToPojo() {

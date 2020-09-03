@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.rbc.databanqbackend.domain.Device;
-import com.rbc.databanqbackend.domain.DevicePairedUser;
+import com.rbc.databanqbackend.domain.TransferHistory;
 
 @SuppressWarnings("serial")
 public class DeviceDTO implements Serializable {
@@ -17,9 +17,7 @@ public class DeviceDTO implements Serializable {
 	private String mac_address;
 	private String device_name;
 	
-	private String history;
-	
-	private List<DevicePairedUserDTO> paired_users;
+	private List<TransferHistoryDTO> history;
 	
 	public DeviceDTO() {
 	}
@@ -31,9 +29,8 @@ public class DeviceDTO implements Serializable {
 		dto.setProduct_type(d.getProductType().toString());
 		dto.setMac_address(d.getMacAddress());
 		dto.setDevice_name(d.getDeviceName());
-		dto.setHistory(d.getHistory());
-		for (DevicePairedUser p : d.getPairedUsers()) {
-			dto.getPaired_users().add(DevicePairedUserDTO.createDTO(p));
+		for (TransferHistory h : d.getHistory()) {
+			dto.getHistory().add(TransferHistoryDTO.createDTO(h));
 		}
 		return dto;
 	}
@@ -44,9 +41,8 @@ public class DeviceDTO implements Serializable {
 		d.setProductType(Integer.valueOf(this.getProduct_type()));
 		d.setMacAddress(this.getMac_address());
 		d.setDeviceName(this.getDevice_name());
-		d.setHistory(this.getHistory());
-		for (DevicePairedUserDTO pDTO : this.getPaired_users()) {
-			d.getPairedUsers().add(pDTO.convertToPojo());
+		for (TransferHistoryDTO h : this.getHistory()) {
+			d.getHistory().add(h.convertToPojo());
 		}
 		return d;
 	}
@@ -86,20 +82,14 @@ public class DeviceDTO implements Serializable {
 		this.device_name = device_name;
 	}
 
-	public String getHistory() {
+	public List<TransferHistoryDTO> getHistory() {
+		if (history == null)
+			history = new ArrayList<TransferHistoryDTO>();
 		return history;
 	}
-	public void setHistory(String history) {
-		this.history = history;
-	}
 
-	public List<DevicePairedUserDTO> getPaired_users() {
-		if (paired_users == null)
-			paired_users = new ArrayList<DevicePairedUserDTO>();
-		return paired_users;
-	}
-	public void setPaired_users(List<DevicePairedUserDTO> paired_users) {
-		this.paired_users = paired_users;
+	public void setHistory(List<TransferHistoryDTO> history) {
+		this.history = history;
 	}
 	
 }
