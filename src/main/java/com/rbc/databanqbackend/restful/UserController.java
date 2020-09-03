@@ -80,5 +80,34 @@ public class UserController {
 					.body(e.getMessage());
 		}
 	}
+	
+	@RequestMapping(value="", method=RequestMethod.DELETE)
+	@ResponseBody
+	public ResponseEntity<?> delete(@RequestBody UserDTO inputDTO) {
+		if (inputDTO.getDid() == null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.header("Access-Control-Allow-Origin", "*")
+					.body("Invalid DID");
+		}
+		
+		try {
+			baasIdService.deleteUser(inputDTO.getDid());
+			return ResponseEntity.status(HttpStatus.OK)
+					.header("Access-Control-Allow-Origin", "*")
+					.body(null);
+		} 
+		catch (BizException e1) {
+			e1.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.header("Access-Control-Allow-Origin", "*")
+					.body(e1.getMessage());
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.header("Access-Control-Allow-Origin", "*")
+					.body(e.getMessage());
+		}
+	}
 
 }

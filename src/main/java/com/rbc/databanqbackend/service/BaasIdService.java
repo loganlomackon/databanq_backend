@@ -113,7 +113,6 @@ public class BaasIdService {
 		String token = login();
 		deleteUser(token, did);
 	}
-
 	public void deleteUser(String token, String did) throws BizException, Exception {
 		String path = BUCKET_URL + "/" + BUCKET_NAME + "/" + FOLDER_USER + "/" + did + ".json";
 		deleteFile(token, path);
@@ -123,7 +122,6 @@ public class BaasIdService {
 		String token = login();
 		return getDevice(token, did);
 	}
-
 	public Device getDevice(String token, String did) throws Exception {
 		try {
 			String path = BUCKET_URL + "/" + BUCKET_NAME + "/" + FOLDER_DEVICE + "/" + did + ".json";
