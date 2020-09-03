@@ -26,7 +26,7 @@
  
  
  
- 
+ Test site: 35.221.155.56:9201
  
  
 ## User endpoints
@@ -75,6 +75,22 @@ did | YES | User DID.
 }
 ```
 
+### Delete
+```
+Delete /api/user
+```
+Delete with DID.
+
+**Parameters:**
+
+Name | Mandatory | Description
+------------ | ------------ | ------------
+did | YES | User DID.
+
+**Response RESULT:**
+200 OK
+
+
 ## Pairing endpoints
 ### Pairing
 ```
@@ -102,6 +118,22 @@ device_name | NO | Device name.
 ```
 
 ## Device endpoints
+### Delete
+```
+Delete /api/device
+```
+Delete with DID.
+
+**Parameters:**
+
+Name | Mandatory | Description
+------------ | ------------ | ------------
+did | YES | Device DID.
+
+**Response RESULT:**
+200 OK
+
+
 ### Transfer
 ```
 POST /api/device/transfer
@@ -112,9 +144,10 @@ Transfer ownership of a device to another user.
 
 Name | Mandatory | Description
 ------------ | ------------ | ------------
-sender_did | YES | Device sender DID.
-receiver_did | YES | Device receiver DID.
+from_did | YES | Device sender DID.
+to_did | YES | Device receiver DID.
 device_did | YES | Device DID.
+tx_id | YES | Transaction ID.
 
 **Response RESULT:**
 ```
@@ -128,7 +161,7 @@ device_did | YES | Device DID.
 ```
 POST /api/device/transfer_history
 ```
-Transfer ownership of a device to another user.
+Check ownership transfer history of a device.
 
 **Parameters:**
 
@@ -137,10 +170,29 @@ Name | Mandatory | Description
 user_did | YES | User DID.
 device_did | YES | Device DID.
 
+TODO: There is no auth mechanism to check current user now. 
+If auth is implemented, user_did will be removed.
+
 **Response RESULT:**
 ```
 {
-  "history": "Factory->A; A->B;"
+  "history": [
+    {
+      timestamp: "12345678",
+      "tx_id": "abcxyz",
+      
+      "from_user": {
+        "did": "abc123",
+        "phone": "0911222333",
+        "email": "abc@gmail.com",
+      },
+      "to_user": {
+        "did": "xyz123",
+        "phone": "0944555666",
+        "email": "xyz@gmail.com",
+      },
+    }
+  ]
 }
 ```
 
