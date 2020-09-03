@@ -27,6 +27,7 @@
  
  
  Test site: 35.221.155.56:9201
+ Please send the following parameters with JSON file.
  
  
 ## User endpoints
