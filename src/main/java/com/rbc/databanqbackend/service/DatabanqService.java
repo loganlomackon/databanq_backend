@@ -41,7 +41,9 @@ public class DatabanqService {
 			device.setMacAddress(inputDTO.getMac_address());
 			device.setDeviceName(inputDTO.getDevice_name());
 			device.setProductId(inputDTO.getProduct_id());
-			device.setProductType(Integer.valueOf(inputDTO.getProduct_type()));
+			if (inputDTO.getProduct_type() != null) {
+				device.setProductType(Integer.valueOf(inputDTO.getProduct_type()));
+			}
 			TransferHistory history = new TransferHistory();
 			history.setTimestamp(new Date().getTime());
 			history.setToDid(userDid);
