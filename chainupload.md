@@ -1,3 +1,10 @@
+
+Body格式如下, 
+重點在於
+"type": ["VerifiableCredential", "DeviceTransfer"],
+與credentialSubject,
+物件中須包含from_did, to_did, 和device_did
+
 ```
 {
 "@context": [
@@ -14,7 +21,7 @@
 "type": ["VerifiableCredential", "DeviceTransfer"],
 
 "credentialSubject": {
-  "from_id": "did:sidetree: hGYUj6aRTUYAAz+Q2jV8Kjg5RHxnUFejS9PPDFln1uc",
+  "from_did": "did:sidetree: hGYUj6aRTUYAAz+Q2jV8Kjg5RHxnUFejS9PPDFln1uc",
   "to_did": "did:sidetree: qHvoB38AyqYNxFImQGdNSNiY/GrXR1E7E3yHVIALVTI",
   "device_did": "did:sidetree: qHvoB38AyqYNxFImQGdNSNiY/GrXR1E7E3yHVIALVTI",
 },
