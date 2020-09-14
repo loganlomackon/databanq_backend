@@ -1,10 +1,10 @@
 
-Body格式如下, \n
-重點為 \n
-type: \n
-["VerifiableCredential", "DeviceTransfer"] 複製貼上 \n
-credentialSubject: \n
-物件中須包含from_did, to_did, 和device_did \n
+Body格式如下
+重點為 <br/>
+type: <br/>
+["VerifiableCredential", "DeviceTransfer"] <br/>
+credentialSubject: <br/>
+物件中須包含from_did, to_did, 和device_did <br/>
 
 ```
 {
