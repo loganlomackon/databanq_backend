@@ -1,9 +1,10 @@
 
-Body格式如下, 
-重點在於
-"type": ["VerifiableCredential", "DeviceTransfer"],
-與credentialSubject,
-物件中須包含from_did, to_did, 和device_did
+Body格式如下, \n
+重點為 \n
+type: \n
+["VerifiableCredential", "DeviceTransfer"] 複製貼上 \n
+credentialSubject: \n
+物件中須包含from_did, to_did, 和device_did \n
 
 ```
 {
