@@ -160,7 +160,7 @@ tx_id | YES | Transaction ID.
 
 ### Transfer history
 ```
-POST /api/device/transfer_history
+POST /api/device/transfer/history
 ```
 Check ownership transfer history of a device.
 
