@@ -29,7 +29,7 @@ Response code: <br/>
 Response body: <br/>
 ```
 {
-	"result”": "OK",
+	"result": "OK",
 	"txId" : "…",
 	"payload" : {
 		"type": "transfer",
