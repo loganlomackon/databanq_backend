@@ -3,9 +3,10 @@ Parameters: <br/>
 Request body:<br/>
 ```
 {
-“ownerId”: “did:sidetree:1314520#abmric33xm”,
-“type”: “ownership”,
-“credential”: “….” // Base64 encoded string of VC
+	"type": "transfer",
+	"from_did": "abc123",
+	"to_did": "xyz123",
+	"device_did: "123abc"
 }
 ```
 Reponse code: <br/>
@@ -14,9 +15,9 @@ Reponse code: <br/>
 Response body: <br/>
 ```
 {
-	“result”: “OK”,
-	“txId” : “…”,
-	“msg” : “”
+	"result": "OK",
+	"txId": "…",
+	"msg": ""
 }
 ```
 
@@ -28,13 +29,13 @@ Response code: <br/>
 Response body: <br/>
 ```
 {
-	“result”: “OK”,
-	“txId” : “…”,
-	“payload” : 
-		{
-			“ownerId”: “did:sidetree:1314520#abmric33xm”,
-“type”: “ownership”,
-“credential”: “….” // Base64 encoded string of VC
-		}
+	"result”": "OK",
+	"txId" : "…",
+	"payload" : {
+		"type": "transfer",
+		"from_did": "abc123",
+		"to_did": "xyz123",
+		"device_did: "123abc"
+	}
 }
 ```
