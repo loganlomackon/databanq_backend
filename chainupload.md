@@ -6,7 +6,7 @@ Request body:<br/>
 	"type": "transfer",
 	"from_did": "abc123",
 	"to_did": "xyz123",
-	"device_did: "123abc"
+	"device_did": "123abc"
 }
 ```
 Reponse code: <br/>
@@ -35,7 +35,7 @@ Response body: <br/>
 		"type": "transfer",
 		"from_did": "abc123",
 		"to_did": "xyz123",
-		"device_did: "123abc"
+		"device_did": "123abc"
 	}
 }
 ```
