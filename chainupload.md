@@ -1,5 +1,7 @@
 POST https://chain-test.baasid.com.tw/iotapi/v1/blockchain/vcs <br/>
-Parameters: <br/>
+Header required: <br/>
+Content-Type: application/json<br/>
+Host: <br/>
 Request body:<br/>
 ```
 {
@@ -21,6 +23,9 @@ Response body: <br/>
 }
 ```
 
+Note: <br/>
+Postman auto-generated header "Content-Length" is NOT compatible <br/>
+<br/>
 Get https://chain-test.baasid.com.tw/iotapi/v1/blockchain/vcs/{txId} <br/>
 Request body: <br/>
 Response code: <br/>
