@@ -106,9 +106,10 @@ Name | Mandatory | Description
 user_did | YES | User DID.
 device_did | YES | Device DID.
 product_id | NO | Device product ID.
-product_type | NO | Device product type.
+product_type | NO | Device product type. Integer.
 mac_address | NO | Device mac address.
 device_name | NO | Device name.
+warranty_period | NO | When device was paired at first time, the warranty expiry date is: CURRENT_DATE+(warranty_period days).
 
 **Response RESULT:**
 ```
@@ -119,7 +120,31 @@ device_name | NO | Device name.
 ```
 
 ## Device endpoints
-### Delete
+### Get device info
+```
+GET /api/device/{DID}
+```
+Get device info by DID.
+
+**Response RESULT:**
+```
+{
+  "did": "xyz123", 
+  
+  "device_name": "DeviceName",
+  "product_id": "productId", 
+  "product_type": "123", 
+  "mac_address": "00:11:22:xxx",
+  "warranty_period": "180",
+  
+  "owner_did": "abc123",
+  "warranty_expiry_date: "2020-11-30"
+}
+
+```
+
+
+### Delete device
 ```
 Delete /api/device
 ```
