@@ -1,4 +1,4 @@
-POST https://chain-test.baasid.com.tw/iotapi/v1/blockchain/vcs <br/>
+POST http://chain-test.baasid.com.tw:8585/iotapi/v1/blockchain/vcs <br/>
 Header required: <br/>
 Content-Type: application/json<br/>
 Host: <br/>
