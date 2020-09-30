@@ -189,8 +189,7 @@ If auth is implemented, user_did will be removed.
 
 **Response RESULT:**
 ```
-{
-  "history": [
+[
     {
       "transfer_date": "2020-09-30 00:00:00",
       "tx_id": "abcxyz",
@@ -204,9 +203,9 @@ If auth is implemented, user_did will be removed.
         "did": "xyz123",
         "phone": "0944555666",
         "email": "xyz@gmail.com",
-      },
-    }
-  ]
-}
+      }
+    },
+    ...
+]
 ```
 
