@@ -125,9 +125,14 @@ Get device info by DID.
   "product_type": "123", 
   "mac_address": "00:11:22:xxx",
   "warranty_period": "180",
+  "warranty_date: "2020-12-30 00:00:00",
   
-  "owner_did": "abc123",
-  "warranty_date: "2020-12-30 00:00:00"
+  "owner": {
+     "did": "abc123",
+     "phone": "0911222333",
+     "email": "abc@gmail.com"
+  },
+  
 }
 
 ```
