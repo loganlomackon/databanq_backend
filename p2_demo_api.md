@@ -192,7 +192,7 @@ If auth is implemented, user_did will be removed.
 {
   "history": [
     {
-      transfer_date: "2020-09-30 00:00:00",
+      "transfer_date": "2020-09-30 00:00:00",
       "tx_id": "abcxyz",
       
       "from_user": {
