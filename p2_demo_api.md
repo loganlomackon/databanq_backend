@@ -162,7 +162,6 @@ Name | Mandatory | Description
 from_did | YES | Device sender DID.
 to_did | YES | Device receiver DID.
 device_did | YES | Device DID.
-tx_id | YES | Transaction ID.
 
 **Response RESULT:**
 ```
