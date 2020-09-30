@@ -6,6 +6,8 @@
 - [Pairing endpoints](#pairing-endpoints)
   - [Pairing](#pairing)
 - [Device endpoints](#device-endpoints)
+  - [Get device info](#get-device)
+  - [Delete device](#delete-device)
   - [Transfer](#transfer)
   - [Transfer history](#transfer-history)
 
