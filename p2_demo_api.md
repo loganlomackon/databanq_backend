@@ -15,21 +15,8 @@
   
  
  
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- Test site: 35.221.155.56:9201
- Please send the following parameters with JSON file.
+ Test site: 35.221.155.56:9201 <br/>
+ Please send the following parameters with JSON file. <br/>
  
  
 ## User endpoints
@@ -206,7 +193,7 @@ If auth is implemented, user_did will be removed.
 {
   "history": [
     {
-      timestamp: "12345678",
+      transfer_date: "2020-09-30 00:00:00",
       "tx_id": "abcxyz",
       
       "from_user": {
