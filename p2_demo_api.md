@@ -127,7 +127,7 @@ Get device info by DID.
   "warranty_period": "180",
   
   "owner_did": "abc123",
-  "warranty_expiry_date: "2020-11-30"
+  "warranty_date: "2020-12-30 00:00:00"
 }
 
 ```
