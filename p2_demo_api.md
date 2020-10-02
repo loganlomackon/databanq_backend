@@ -6,6 +6,8 @@
 - [Pairing endpoints](#pairing-endpoints)
   - [Pairing](#pairing)
 - [Device endpoints](#device-endpoints)
+  - [Get device info](#get-device-info)
+  - [Delete device](#delete-device)
   - [Transfer](#transfer)
   - [Transfer history](#transfer-history)
 
@@ -13,21 +15,8 @@
   
  
  
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- Test site: 35.221.155.56:9201
- Please send the following parameters with JSON file.
+ Test site: 35.221.155.56:9201 <br/>
+ Please send the following parameters with JSON file. <br/>
  
  
 ## User endpoints
@@ -106,9 +95,10 @@ Name | Mandatory | Description
 user_did | YES | User DID.
 device_did | YES | Device DID.
 product_id | NO | Device product ID.
-product_type | NO | Device product type.
+product_type | NO | Device product type. Integer.
 mac_address | NO | Device mac address.
 device_name | NO | Device name.
+warranty_period | NO | When device was paired at first time, the warranty expiry date is: CURRENT_DATE+(warranty_period days).
 
 **Response RESULT:**
 ```
@@ -119,7 +109,36 @@ device_name | NO | Device name.
 ```
 
 ## Device endpoints
-### Delete
+### Get device info
+```
+GET /api/device/{DID}
+```
+Get device info by DID.
+
+**Response RESULT:**
+```
+{
+  "did": "xyz123", 
+  
+  "device_name": "DeviceName",
+  "product_id": "productId", 
+  "product_type": "123", 
+  "mac_address": "00:11:22:xxx",
+  "warranty_period": "180",
+  "warranty_date: "2020-12-30 00:00:00",
+  
+  "owner": {
+     "did": "abc123",
+     "phone": "0911222333",
+     "email": "abc@gmail.com"
+  },
+  
+}
+
+```
+
+
+### Delete device
 ```
 Delete /api/device
 ```
@@ -148,7 +167,6 @@ Name | Mandatory | Description
 from_did | YES | Device sender DID.
 to_did | YES | Device receiver DID.
 device_did | YES | Device DID.
-tx_id | YES | Transaction ID.
 
 **Response RESULT:**
 ```
@@ -160,7 +178,7 @@ tx_id | YES | Transaction ID.
 
 ### Transfer history
 ```
-POST /api/device/transfer_history
+POST /api/device/transfer/history
 ```
 Check ownership transfer history of a device.
 
@@ -176,10 +194,9 @@ If auth is implemented, user_did will be removed.
 
 **Response RESULT:**
 ```
-{
-  "history": [
+[
     {
-      timestamp: "12345678",
+      "transfer_date": "2020-09-30 00:00:00",
       "tx_id": "abcxyz",
       
       "from_user": {
@@ -191,9 +208,9 @@ If auth is implemented, user_did will be removed.
         "did": "xyz123",
         "phone": "0944555666",
         "email": "xyz@gmail.com",
-      },
-    }
-  ]
-}
+      }
+    },
+    ...
+]
 ```
 
