@@ -1,21 +1,56 @@
 package com.rbc.databanqbackend.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-public class Device {
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
+@SuppressWarnings("serial")
+@Entity
+@Table(name = "SYS_DEVICE", uniqueConstraints={
+		@UniqueConstraint(columnNames={"ID"})})
+public class Device extends AbstractObject implements Serializable {
+
+	@Column(name="DID")
 	private String did;
 	
+	@Column(name="PRODUCT_ID")
 	private String productId;
+	//
+	@Column(name="PRODUCT_TYPE")
 	private Integer productType;
-	private String macAddress;
-	private String deviceName;
-	//Integer deviceID
 	
-	private List<TransferHistory> history;
+	@Column(name="MAC_ADDRESS")
+	private String macAddress;
+	
+	@Column(name="DEVICE_NAME")
+	private String deviceName;
+	
+	@Column(name="WARRANTY_PERIOD")
+	private Integer warrantyPeriod;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="WARRANTY_DATE")
+	private Date warrantyDate;
+	
+	//Temp
+	@Column(name="OWNER_DID")
+	private String ownerDid;
+	
+	@OneToMany(mappedBy = "device", cascade = CascadeType.REFRESH)
+	private List<DeviceTransferHistory> history;
 
 	public Device() {
+		this.setDeleted(false);
 	}
 
 	public String getDid() {
@@ -53,22 +88,37 @@ public class Device {
 		this.deviceName = deviceName;
 	}
 
-	public List<TransferHistory> getHistory() {
+	public Integer getWarrantyPeriod() {
+		return warrantyPeriod;
+	}
+
+	public void setWarrantyPeriod(Integer warrantyPeriod) {
+		this.warrantyPeriod = warrantyPeriod;
+	}
+
+	public Date getWarrantyDate() {
+		return warrantyDate;
+	}
+
+	public void setWarrantyDate(Date warrantyDate) {
+		this.warrantyDate = warrantyDate;
+	}
+
+	public List<DeviceTransferHistory> getHistory() {
 		if (history == null)
-			history = new ArrayList<TransferHistory>();
+			history = new ArrayList<DeviceTransferHistory>();
 		return history;
 	}
-	public void setHistory(List<TransferHistory> history) {
+	public void setHistory(List<DeviceTransferHistory> history) {
 		this.history = history;
 	}
-	
+
 	public String getOwnerDid() {
-		List<TransferHistory> historyNow = getHistory();
-		if (historyNow.size() == 0) {
-			return null;
-		}
-		
-		return historyNow.get(historyNow.size()-1).getToDid();
+		return ownerDid;
+	}
+
+	public void setOwnerDid(String ownerDid) {
+		this.ownerDid = ownerDid;
 	}
 
 }

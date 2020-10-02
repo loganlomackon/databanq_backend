@@ -1,21 +1,21 @@
 package com.rbc.databanqbackend.restful.dto;
 
-public class TransferHistoryFullDTO {
+public class DeviceTransferHistoryFullDTO {
 
-	private String timestamp;
+	private String transfer_date;
 	private UserDTO from_user;
 	private UserDTO to_user;
 	private String tx_id;
 	
-	public TransferHistoryFullDTO() {
+	public DeviceTransferHistoryFullDTO() {
 	}
 
-	public String getTimestamp() {
-		return timestamp;
+	public String getTransfer_date() {
+		return transfer_date;
 	}
 
-	public void setTimestamp(String timestamp) {
-		this.timestamp = timestamp;
+	public void setTransfer_date(String transfer_date) {
+		this.transfer_date = transfer_date;
 	}
 
 	public UserDTO getFrom_user() {

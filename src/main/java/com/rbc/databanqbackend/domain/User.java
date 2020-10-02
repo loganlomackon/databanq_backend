@@ -1,16 +1,38 @@
 package com.rbc.databanqbackend.domain;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
 
-public class User {
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
+@SuppressWarnings("serial")
+@Entity
+@Table(name = "SYS_USER", uniqueConstraints={
+		@UniqueConstraint(columnNames={"ID"})})
+public class User extends AbstractObject implements Serializable {
+
+	@Column(name="DID")
 	private String did;
+	
+	@Column(name="EMAIL")
 	private String email;
+	
+	@Column(name="PHONE")
 	private String phone;
-	private List<UserPairedDevice> pairedDevices;
+	
+	@OneToMany(mappedBy = "fromUser", cascade = CascadeType.REFRESH)
+	private List<DeviceTransferHistory> fromHistory;
+	
+	@OneToMany(mappedBy = "toUser", cascade = CascadeType.REFRESH)
+	private List<DeviceTransferHistory> toHistory;
 	
 	public User() {
+		this.setDeleted(false);
 	}
 
 	public String getDid() {
@@ -34,16 +56,23 @@ public class User {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-
-	public List<UserPairedDevice> getPairedDevices() {
-		if (pairedDevices == null)
-			pairedDevices = new ArrayList<UserPairedDevice>();
-		return pairedDevices;
-	}
-	public void setPairedDevices(List<UserPairedDevice> pairedDevices) {
-		this.pairedDevices = pairedDevices;
-	}
 	
+	public List<DeviceTransferHistory> getFromHistory() {
+		return fromHistory;
+	}
+
+	public void setFromHistory(List<DeviceTransferHistory> fromHistory) {
+		this.fromHistory = fromHistory;
+	}
+
+	public List<DeviceTransferHistory> getToHistory() {
+		return toHistory;
+	}
+
+	public void setToHistory(List<DeviceTransferHistory> toHistory) {
+		this.toHistory = toHistory;
+	}
+	/*
 	public UserPairedDevice getPairByDeviceDid(String deviceDid) {
 		for (UserPairedDevice p : getPairedDevices()) {
 			if (p.getDeviceDid().equals(deviceDid)) {
@@ -51,6 +80,6 @@ public class User {
 			}
 		}
 		return null;
-	}
+	}*/
 	
 }

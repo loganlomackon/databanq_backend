@@ -128,7 +128,8 @@ public class BaasIdService {
 			String res = downloadFile(token, path);
 			Gson gson = new Gson();
 			DeviceDTO dto = gson.fromJson(res, DeviceDTO.class);
-			return dto.convertToPojo();
+			//return dto.convertToPojo();
+			return new Device();
 		} catch (BizException e) {
 		}
 		return null;
@@ -144,7 +145,8 @@ public class BaasIdService {
 		File file = File.createTempFile(did, ".json");
 		FileWriter myWriter = new FileWriter(file);
 		Gson gson = new Gson();
-		myWriter.write(gson.toJson(DeviceDTO.createDTO(device)));
+		//myWriter.write(gson.toJson(DeviceDTO.createDTO(device)));
+		myWriter.write(gson.toJson(new DeviceDTO()));
 		myWriter.close();
 		file.deleteOnExit();
 
@@ -169,7 +171,7 @@ public class BaasIdService {
 		form.put("username", "fanchuang");
 		form.put("password", "honglo@baasid");
 
-		String content = httpClientService.sendPost(LOGIN_URL, form);
+		String content = httpClientService.sendPostForm(LOGIN_URL, form);
 		Gson gson = new Gson();
 		BaasIdLoginResDTO resDTO = gson.fromJson(content, BaasIdLoginResDTO.class);
 		return resDTO.getAccess_token();

@@ -1,66 +1,92 @@
 package com.rbc.databanqbackend.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.Gson;
 import com.rbc.databanqbackend.domain.Device;
-import com.rbc.databanqbackend.domain.TransferHistory;
+import com.rbc.databanqbackend.domain.DeviceTransferHistory;
 import com.rbc.databanqbackend.domain.User;
-import com.rbc.databanqbackend.domain.UserPairedDevice;
 import com.rbc.databanqbackend.exception.BizException;
+import com.rbc.databanqbackend.restful.dto.BlockchainDeviceTransferDTO;
 import com.rbc.databanqbackend.restful.dto.DeviceTransferDTO;
+import com.rbc.databanqbackend.restful.dto.DeviceTransferHistoryFullDTO;
 import com.rbc.databanqbackend.restful.dto.PairingDTO;
-import com.rbc.databanqbackend.restful.dto.TransferHistoryFullDTO;
 import com.rbc.databanqbackend.restful.dto.UserDTO;
 import com.rbc.databanqbackend.restful.dto.UserDeviceDTO;
+import com.rbc.databanqbackend.util.DateUtil;
 
 @Service
 public class DatabanqService {
 	
 	@Autowired
-	private BaasIdService baasIdService;
+	private UserService userService;
+	@Autowired
+	private DeviceService deviceService;
+	@Autowired
+	private DeviceTransferHistoryService historyService;
+	@Autowired
+	private HttpClientService httpClientService;
 	
-	public UserDeviceDTO pairing(PairingDTO inputDTO) throws BizException,Exception {
+	public UserDeviceDTO pairing(PairingDTO inputDTO) throws BizException, Exception {
 		String deviceDid = inputDTO.getDevice_did();
 		String userDid = inputDTO.getUser_did();
 		
-		String token = baasIdService.login();
-		User user = baasIdService.getUser(token, userDid);
+		User user = userService.getByDid(userDid);
 		if (user == null) {
-			throw new BizException("Invalid user");
+			throw new BizException("Invalid user DID");
 		}
 		
-		Device device = baasIdService.getDevice(token, deviceDid);
+		Device device = deviceService.getByDid(deviceDid);
 		if (device == null) {
+			//Create new device
 			device = new Device();
-			device.setDid(inputDTO.getDevice_did());
+			device.setDid(deviceDid);
 			device.setMacAddress(inputDTO.getMac_address());
 			device.setDeviceName(inputDTO.getDevice_name());
 			device.setProductId(inputDTO.getProduct_id());
 			if (inputDTO.getProduct_type() != null) {
 				device.setProductType(Integer.valueOf(inputDTO.getProduct_type()));
 			}
-			TransferHistory history = new TransferHistory();
-			history.setTimestamp(new Date().getTime());
-			history.setToDid(userDid);
-			device.getHistory().add(history);
-			device = baasIdService.saveDevice(token, deviceDid, device);
+			Date now = new Date();
+			Date warrantyDate = null;
+			if (inputDTO.getWarranty_period() != null) {
+				Integer warrantyPeriod = Integer.valueOf(inputDTO.getWarranty_period());
+				device.setWarrantyPeriod(warrantyPeriod);
+				
+				Date today = DateUtil.getDay(now);
+				warrantyDate = DateUtil.getDateFromDate(today, Calendar.DAY_OF_MONTH, warrantyPeriod+1);
+				device.setWarrantyDate(warrantyDate);
+			}
+			device = deviceService.save(device);
+			
+			//Post to blockchain
+			BlockchainDeviceTransferDTO toChainDTO = new BlockchainDeviceTransferDTO();
+			toChainDTO.setType("device_transfer");
+			toChainDTO.setDevice_did(deviceDid);
+			toChainDTO.setTo_did(userDid);
+			toChainDTO.setTransfer_date(DateUtil.convertDateToStringUntilSeconds(now));
+			if (warrantyDate != null) {
+				toChainDTO.setWarranty_date(DateUtil.convertDateToStringUntilSeconds(warrantyDate));
+			}
+			Gson gson = new Gson();
+			//TODO
+			//String txId = httpClientService.sendToBaasIdBlockChain(gson.toJson(toChainDTO));
+			String txId = null;
+			
+			//Create transfer history
+			DeviceTransferHistory history = new DeviceTransferHistory();
+			history.setTransferDate(now);
+			history.setToUser(user);
+			history.setDevice(device);
+			history.setTxId(txId);
+			history = historyService.save(history);
 		}
-		
-		UserPairedDevice pair = user.getPairByDeviceDid(deviceDid);
-		if (pair == null) {
-			pair = new UserPairedDevice();
-			pair.setDeviceDid(deviceDid);
-			user.getPairedDevices().add(pair);
-		}
-		pair.setIsRemoved(false);
-		pair.setDueTimestamp(null);
-		baasIdService.deleteUser(token, userDid);
-		user = baasIdService.saveUser(token, userDid, user);
 		
 		UserDeviceDTO dto = new UserDeviceDTO();
 		dto.setDevice_did(deviceDid);
@@ -72,54 +98,41 @@ public class DatabanqService {
 		String deviceDid = inputDTO.getDevice_did();
 		String fromDid = inputDTO.getFrom_did();
 		String toDid = inputDTO.getTo_did();
-		String txId = inputDTO.getTx_id();
 		
-		//Acquire fromUser, toUser and device
-		String token = baasIdService.login();
-		User fromUser = baasIdService.getUser(token, fromDid);
-		User toUser = baasIdService.getUser(token, toDid);
+		User fromUser = userService.getByDid(fromDid);
+		User toUser = userService.getByDid(toDid);
 		if (fromUser == null || toUser == null) {
-			throw new BizException("Invalid user ID");
+			throw new BizException("Invalid user DID");
 		}
-		Device device = baasIdService.getDevice(token, deviceDid);
+		Device device = deviceService.getByDid(deviceDid);
 		if (device == null) {
-			throw new BizException("Invalid device ID");
+			throw new BizException("Invalid device DID");
 		}
 		
-		Long timestamp = new Date().getTime();
-		//Remove device from fromUser
-		UserPairedDevice fromPair = fromUser.getPairByDeviceDid(deviceDid);
-		if (fromPair == null) {
-			throw new BizException("User is not authrized to transfer this device.");
+		Date now = new Date();
+		//Post to blockchain
+		BlockchainDeviceTransferDTO toChainDTO = new BlockchainDeviceTransferDTO();
+		toChainDTO.setType("device_transfer");
+		toChainDTO.setDevice_did(deviceDid);
+		toChainDTO.setFrom_did(fromDid);
+		toChainDTO.setTo_did(toDid);
+		toChainDTO.setTransfer_date(DateUtil.convertDateToStringUntilSeconds(now));
+		if (device.getWarrantyDate() != null) {
+			toChainDTO.setWarranty_date(DateUtil.convertDateToStringUntilSeconds(device.getWarrantyDate()));
 		}
-		fromPair.setIsRemoved(true);
-		fromPair.setDueTimestamp(timestamp);
+		Gson gson = new Gson();
+		//TODO
+		//String txId = httpClientService.sendToBaasIdBlockChain(gson.toJson(toChainDTO));
+		String txId = null;
 		
-		//Append device to toUser
-		UserPairedDevice toPair = toUser.getPairByDeviceDid(deviceDid);
-		if (toPair == null) {
-			toPair = new UserPairedDevice();
-			toPair.setDeviceDid(deviceDid);
-			toUser.getPairedDevices().add(toPair);
-		}
-		toPair.setDueTimestamp(null);
-		toPair.setIsRemoved(false);
-		
-		//Append history to device
-		TransferHistory newHistory = new TransferHistory();
-		newHistory.setFromDid(fromDid);
-		newHistory.setToDid(toDid);
-		newHistory.setTimestamp(timestamp);
-		newHistory.setTxId(txId);
-		device.getHistory().add(newHistory);
-		
-		//Persist
-		baasIdService.deleteUser(token, fromDid);
-		baasIdService.deleteUser(token, toDid);
-		baasIdService.deleteDevice(token, deviceDid);
-		fromUser = baasIdService.saveUser(token, fromDid, fromUser);
-		toUser = baasIdService.saveUser(token, toDid, toUser);
-		device = baasIdService.saveDevice(token, deviceDid, device);
+		//Create transfer history
+		DeviceTransferHistory history = new DeviceTransferHistory();
+		history.setFromUser(fromUser);
+		history.setToUser(toUser);
+		history.setDevice(device);
+		history.setTransferDate(now);
+		history.setTxId(txId);
+		history = historyService.save(history);
 		
 		UserDeviceDTO dto = new UserDeviceDTO();
 		dto.setUser_did(toDid);
@@ -127,44 +140,27 @@ public class DatabanqService {
 		return dto;
 	}
 	
-	public List<TransferHistoryFullDTO> getDeviceTransferHistory(String userId, String deviceId) throws BizException, Exception {
-		String token = baasIdService.login();
-		User user = baasIdService.getUser(token, userId);
+	public List<DeviceTransferHistoryFullDTO> getDeviceTransferHistory(String userDid, String deviceDid) throws BizException, Exception {
+		User user = userService.getByDid(userDid);
 		if (user == null) {
-			throw new BizException("Invalid user ID");
+			throw new BizException("Invalid user DID");
 		}
-		UserPairedDevice pair = user.getPairByDeviceDid(deviceId);
-		if (pair == null) {
-			throw new BizException("User is not authrized to review this device.");
-		}
-		Device device = baasIdService.getDevice(token, deviceId);
+		Device device = deviceService.getByDid(deviceDid);
 		if (device == null) {
-			throw new BizException("Invalid device ID");
+			throw new BizException("Invalid device DID");
 		}
 		
-		List<TransferHistory> sources = new ArrayList<TransferHistory>();
-		if (pair.getDueTimestamp() == null) {
-			sources = device.getHistory();
-		}
-		else {
-			for (TransferHistory h : device.getHistory()) {
-				if (h.getTimestamp() <= pair.getDueTimestamp()) {
-					sources.add(h);
-				}
-			}
-		}
+		List<DeviceTransferHistory> history = historyService.getByUserAndDevice(user, device);
 		
-		List<TransferHistoryFullDTO> dtos = new ArrayList<TransferHistoryFullDTO>();
-		for (TransferHistory h : sources) {
-			TransferHistoryFullDTO dto = new TransferHistoryFullDTO();
+		List<DeviceTransferHistoryFullDTO> dtos = new ArrayList<DeviceTransferHistoryFullDTO>();
+		for (DeviceTransferHistory h : history) {
+			DeviceTransferHistoryFullDTO dto = new DeviceTransferHistoryFullDTO();
+			dto.setTransfer_date(DateUtil.convertDateToStringUntilSeconds(h.getTransferDate()));
 			dto.setTx_id(h.getTxId());
-			dto.setTimestamp(h.getTimestamp().toString());
-	
-			if (h.getFromDid() != null) {
-				dto.setFrom_user(UserDTO.createSimpleDTO(baasIdService.getUser(h.getFromDid())));
+			if (h.getFromUser() != null) {
+				dto.setFrom_user(UserDTO.createSimpleDTO(h.getFromUser()));
 			}
-			dto.setTo_user(UserDTO.createSimpleDTO(baasIdService.getUser(h.getToDid())));
-			
+			dto.setTo_user(UserDTO.createSimpleDTO(h.getToUser()));
 			dtos.add(dto);
 		}
 		return dtos;

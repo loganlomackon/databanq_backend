@@ -1,17 +1,15 @@
 package com.rbc.databanqbackend.restful.dto;
 
-import com.rbc.databanqbackend.domain.TransferHistory;
-
-public class TransferHistoryDTO {
+public class DeviceTransferHistoryDTO {
 
 	private String timestamp;
 	private String from_did;
 	private String to_did;
 	private String tx_id;
 	
-	public TransferHistoryDTO() {
+	public DeviceTransferHistoryDTO() {
 	}
-	
+	/*
 	public static TransferHistoryDTO createDTO(TransferHistory h) {
 		TransferHistoryDTO dto = new TransferHistoryDTO();
 		dto.setTimestamp(h.getTimestamp().toString());
@@ -28,7 +26,7 @@ public class TransferHistoryDTO {
 		h.setTxId(this.getTx_id());
 		return h;
 	}
-
+*/
 	public String getTimestamp() {
 		return timestamp;
 	}

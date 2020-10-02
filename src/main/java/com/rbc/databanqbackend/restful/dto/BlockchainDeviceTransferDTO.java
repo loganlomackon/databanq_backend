@@ -1,13 +1,26 @@
 package com.rbc.databanqbackend.restful.dto;
 
-public class DeviceTransferDTO {
+public class BlockchainDeviceTransferDTO {
+
+	private String type;
 	
 	private String device_did;
 	private String from_did;
 	private String to_did;
 	private String tx_id;
 	
-	public DeviceTransferDTO() {
+	private String transfer_date;
+	private String warranty_date;
+	
+	public BlockchainDeviceTransferDTO() {
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public String getFrom_did() {
@@ -40,6 +53,22 @@ public class DeviceTransferDTO {
 
 	public void setDevice_did(String device_did) {
 		this.device_did = device_did;
+	}
+
+	public String getTransfer_date() {
+		return transfer_date;
+	}
+
+	public void setTransfer_date(String transfer_date) {
+		this.transfer_date = transfer_date;
+	}
+
+	public String getWarranty_date() {
+		return warranty_date;
+	}
+
+	public void setWarranty_date(String warranty_date) {
+		this.warranty_date = warranty_date;
 	}
 
 }

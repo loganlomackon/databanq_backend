@@ -41,12 +41,6 @@ public class PairingController {
 					.header("Access-Control-Allow-Origin", "*")
 					.body(dto);
 		} 
-		catch (BizException e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.header("Access-Control-Allow-Origin", "*")
-					.body(e.getMessage());
-		}
 		catch (Exception e2) {
 			e2.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

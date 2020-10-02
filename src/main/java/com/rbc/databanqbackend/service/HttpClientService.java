@@ -1,5 +1,6 @@
 package com.rbc.databanqbackend.service;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,30 +17,42 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.Gson;
 import com.rbc.databanqbackend.exception.BizException;
+import com.rbc.databanqbackend.restful.dto.baasid.BaasIdBlockchainResDTO;
 
 
 @Service
 public class HttpClientService {
 	
-	public String sendPost(String path, Map<String, String> form) throws BizException,Exception {
-		return sendPost(path, new HashMap<String,String>(), form);
+	private static final String BAASID_TEST_CHAIN_URL = "http://chain-test.baasid.com.tw:8585/iotapi/v1/blockchain/vcs";
+	
+	public String sendPostForm(String path, Map<String, String> form) throws BizException,Exception {
+		return sendPostForm(path, new HashMap<String,String>(), form);
 	}
-	public String sendPost(String path, Map<String, String> headers, Map<String, String> form) throws BizException,Exception {
-		HttpPost post = new HttpPost(path);
-		RequestConfig defaultConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
-		post.setConfig(defaultConfig);
-		post.addHeader("Content-type", "application/x-www-form-urlencoded");
+	public String sendPostForm(String path, Map<String, String> headers, Map<String, String> form) throws BizException,Exception {
+		headers.put("Content-type", "application/x-www-form-urlencoded");
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		for (String key : form.keySet()) {
 			params.add(new BasicNameValuePair(key, form.get(key)));
 		}
-    	post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+		
+		return sendPost(path, headers, new UrlEncodedFormEntity(params, "UTF-8"));
+	}
+	public String sendPost(String path, Map<String, String> headers, HttpEntity entity) throws BizException,Exception {
+		HttpPost post = new HttpPost(path);
+		RequestConfig defaultConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
+		post.setConfig(defaultConfig);
+		for (String key : headers.keySet()) {
+			post.addHeader(key, headers.get(key));
+		}
+    	post.setEntity(entity);
     	
     	CloseableHttpClient client = HttpClients.createDefault();
 	    CloseableHttpResponse response = client.execute(post);
@@ -53,6 +66,10 @@ public class HttpClientService {
 			throw new BizException(String.valueOf(status)+":"+res);
 		    
 		return res;
+	}
+	
+	public String sendGet(String path) throws BizException,Exception {
+		return sendGet(path, new HashMap<String,String>());
 	}
 	public String sendGet(String path, Map<String,String> headers) throws BizException,Exception {
 		CloseableHttpClient client = HttpClients.createDefault();
@@ -110,7 +127,21 @@ public class HttpClientService {
 			throw new BizException(String.valueOf(status)+":"+res);
 	}
 	
-
+	public String sendToBaasIdBlockChain(String content) throws BizException, Exception {
+		StringEntity entity = new StringEntity(content, Charset.forName("UTF-8"));
+		
+		Map<String,String> headers = new HashMap<String, String>();
+		headers.put("Content-type", "application/json");
+		headers.put("charset", "UTF-8");
+		String res = sendPost(BAASID_TEST_CHAIN_URL, headers, entity);
+		Gson gson = new Gson();
+		BaasIdBlockchainResDTO resDTO = gson.fromJson(res, BaasIdBlockchainResDTO.class);
+		return resDTO.getTxid();
+	}
+	
+	public String getFromBaasIdBlockChain(String txId) throws BizException, Exception {
+		return sendGet(BAASID_TEST_CHAIN_URL+"/"+txId);
+	}
 	
 	
 }

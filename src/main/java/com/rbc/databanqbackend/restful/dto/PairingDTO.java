@@ -13,6 +13,8 @@ public class PairingDTO implements Serializable {
 	private String mac_address;
 	private String device_name;
 	
+	private String warranty_period;
+	
 	public PairingDTO() {
 	}
 
@@ -56,6 +58,14 @@ public class PairingDTO implements Serializable {
 	}
 	public void setDevice_name(String device_name) {
 		this.device_name = device_name;
+	}
+
+	public String getWarranty_period() {
+		return warranty_period;
+	}
+
+	public void setWarranty_period(String warranty_period) {
+		this.warranty_period = warranty_period;
 	}
 	
 }

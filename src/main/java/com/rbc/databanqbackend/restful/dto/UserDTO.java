@@ -1,11 +1,8 @@
 package com.rbc.databanqbackend.restful.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.rbc.databanqbackend.domain.User;
-import com.rbc.databanqbackend.domain.UserPairedDevice;
 
 @SuppressWarnings("serial")
 public class UserDTO implements Serializable {
@@ -13,16 +10,12 @@ public class UserDTO implements Serializable {
 	private String did;
 	private String email;
 	private String phone;
-	private List<UserPairedDeviceDTO> paired_devices;
 	
 	public UserDTO() {
 	}
 	
 	public static UserDTO createDTO(User u) {
 		UserDTO dto = createSimpleDTO(u);
-		for (UserPairedDevice p : u.getPairedDevices()) {
-			dto.getPaired_devices().add(UserPairedDeviceDTO.createDTO(p));
-		}
 		return dto;
 	}
 	public static UserDTO createSimpleDTO(User u) {
@@ -37,9 +30,6 @@ public class UserDTO implements Serializable {
 		u.setDid(this.getDid());
 		u.setEmail(this.getEmail());
 		u.setPhone(this.getPhone());
-		for (UserPairedDeviceDTO pDTO : this.getPaired_devices()) {
-			u.getPairedDevices().add(pDTO.convertToPojo());
-		}
 		return u;
 	}
 	
@@ -62,15 +52,6 @@ public class UserDTO implements Serializable {
 	}
 	public void setPhone(String phone) {
 		this.phone = phone;
-	}
-
-	public List<UserPairedDeviceDTO> getPaired_devices() {
-		if (paired_devices == null)
-			paired_devices = new ArrayList<UserPairedDeviceDTO>();
-		return paired_devices;
-	}
-	public void setPaired_devices(List<UserPairedDeviceDTO> paired_devices) {
-		this.paired_devices = paired_devices;
 	}
 	
 }

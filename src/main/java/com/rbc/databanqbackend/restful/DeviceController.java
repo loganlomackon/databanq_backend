@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,13 +13,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rbc.databanqbackend.domain.Device;
+import com.rbc.databanqbackend.domain.User;
 import com.rbc.databanqbackend.exception.BizException;
 import com.rbc.databanqbackend.restful.dto.DeviceDTO;
 import com.rbc.databanqbackend.restful.dto.DeviceTransferDTO;
-import com.rbc.databanqbackend.restful.dto.TransferHistoryFullDTO;
+import com.rbc.databanqbackend.restful.dto.DeviceTransferHistoryFullDTO;
+import com.rbc.databanqbackend.restful.dto.UserDTO;
 import com.rbc.databanqbackend.restful.dto.UserDeviceDTO;
-import com.rbc.databanqbackend.service.BaasIdService;
 import com.rbc.databanqbackend.service.DatabanqService;
+import com.rbc.databanqbackend.service.DeviceService;
+import com.rbc.databanqbackend.service.DeviceTransferHistoryService;
 
 @RestController
 @RequestMapping("/api/device")
@@ -27,20 +31,18 @@ public class DeviceController {
 	@Autowired
 	private DatabanqService databanqService;
 	@Autowired
-	private BaasIdService baasIdService;
+	private DeviceService deviceService;
+	@Autowired
+	private DeviceTransferHistoryService historyService;
 	
-	@RequestMapping(value="", method=RequestMethod.POST)
+	@RequestMapping(value="/{did}", method=RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<?> getDevice(@RequestBody DeviceDTO inputDTO) {
-		if (inputDTO.getDid() == null) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.header("Access-Control-Allow-Origin", "*")
-					.body("Invalid device DID");
-		}
-		
+	public ResponseEntity<?> getDevice(@PathVariable String did) {
 		try {
-			Device d = baasIdService.getDevice(inputDTO.getDid());
-			DeviceDTO dto = DeviceDTO.createDTO(d);
+			Device device = deviceService.getByDid(did);
+			User user = historyService.getDeviceOwner(device);
+			DeviceDTO dto = DeviceDTO.createDTO(device);
+			dto.setOwner(UserDTO.createDTO(user));
 			return ResponseEntity.status(HttpStatus.OK)
 					.header("Access-Control-Allow-Origin", "*")
 					.body(dto);
@@ -63,17 +65,13 @@ public class DeviceController {
 		}
 		
 		try {
-			baasIdService.deleteDevice(inputDTO.getDid());
+			Device device = deviceService.getByDid(inputDTO.getDid());
+			device.setDeleted(true);
+			device = deviceService.save(device);
 			return ResponseEntity.status(HttpStatus.OK)
 					.header("Access-Control-Allow-Origin", "*")
 					.body(null);
 		} 
-		catch (BizException e1) {
-			e1.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.header("Access-Control-Allow-Origin", "*")
-					.body(e1.getMessage());
-		}
 		catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -131,7 +129,7 @@ public class DeviceController {
 		}
 		
 		try {
-			List<TransferHistoryFullDTO> dtos = databanqService.getDeviceTransferHistory(inputDTO.getUser_did(), inputDTO.getDevice_did());
+			List<DeviceTransferHistoryFullDTO> dtos = databanqService.getDeviceTransferHistory(inputDTO.getUser_did(), inputDTO.getDevice_did());
 			return ResponseEntity.status(HttpStatus.OK)
 					.header("Access-Control-Allow-Origin", "*")
 					.body(dtos);

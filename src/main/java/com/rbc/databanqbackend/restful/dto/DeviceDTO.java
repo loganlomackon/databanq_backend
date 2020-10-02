@@ -1,11 +1,9 @@
 package com.rbc.databanqbackend.restful.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.rbc.databanqbackend.domain.Device;
-import com.rbc.databanqbackend.domain.TransferHistory;
+import com.rbc.databanqbackend.util.DateUtil;
 
 @SuppressWarnings("serial")
 public class DeviceDTO implements Serializable {
@@ -16,8 +14,10 @@ public class DeviceDTO implements Serializable {
 	private String product_type;
 	private String mac_address;
 	private String device_name;
+	private String warranty_period;
+	private String warranty_date;
 	
-	private List<TransferHistoryDTO> history;
+	private UserDTO owner;
 	
 	public DeviceDTO() {
 	}
@@ -26,27 +26,20 @@ public class DeviceDTO implements Serializable {
 		DeviceDTO dto = new DeviceDTO();
 		dto.setDid(d.getDid());
 		dto.setProduct_id(d.getProductId());
-		dto.setProduct_type(d.getProductType().toString());
+		if (d.getProductType() != null) {
+			dto.setProduct_type(d.getProductType().toString());
+		}
 		dto.setMac_address(d.getMacAddress());
 		dto.setDevice_name(d.getDeviceName());
-		for (TransferHistory h : d.getHistory()) {
-			dto.getHistory().add(TransferHistoryDTO.createDTO(h));
+		if (d.getWarrantyPeriod() != null) {
+			dto.setWarranty_period(d.getWarrantyPeriod().toString());
+		}
+		if (d.getWarrantyDate() != null) {
+			dto.setWarranty_date(DateUtil.convertDateToStringUntilSeconds(d.getWarrantyDate()));
 		}
 		return dto;
 	}
-	public Device convertToPojo() {
-		Device d = new Device();
-		d.setDid(this.getDid());
-		d.setProductId(this.getProduct_id());
-		d.setProductType(Integer.valueOf(this.getProduct_type()));
-		d.setMacAddress(this.getMac_address());
-		d.setDeviceName(this.getDevice_name());
-		for (TransferHistoryDTO h : this.getHistory()) {
-			d.getHistory().add(h.convertToPojo());
-		}
-		return d;
-	}
-
+	
 	public String getDid() {
 		return did;
 	}
@@ -82,14 +75,28 @@ public class DeviceDTO implements Serializable {
 		this.device_name = device_name;
 	}
 
-	public List<TransferHistoryDTO> getHistory() {
-		if (history == null)
-			history = new ArrayList<TransferHistoryDTO>();
-		return history;
+	public String getWarranty_date() {
+		return warranty_date;
 	}
 
-	public void setHistory(List<TransferHistoryDTO> history) {
-		this.history = history;
+	public void setWarranty_date(String warranty_date) {
+		this.warranty_date = warranty_date;
+	}
+
+	public String getWarranty_period() {
+		return warranty_period;
+	}
+
+	public void setWarranty_period(String warranty_period) {
+		this.warranty_period = warranty_period;
+	}
+
+	public UserDTO getOwner() {
+		return owner;
+	}
+
+	public void setOwner(UserDTO owner) {
+		this.owner = owner;
 	}
 	
 }

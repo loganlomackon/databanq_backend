@@ -10,16 +10,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rbc.databanqbackend.domain.User;
-import com.rbc.databanqbackend.exception.BizException;
 import com.rbc.databanqbackend.restful.dto.UserDTO;
-import com.rbc.databanqbackend.service.BaasIdService;
+import com.rbc.databanqbackend.service.UserService;
 
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
 
 	@Autowired
-	private BaasIdService baasIdService;
+	private UserService userService;
 	
 	@RequestMapping(value="/signup", method=RequestMethod.POST)
 	@ResponseBody
@@ -32,17 +31,11 @@ public class UserController {
 		
 		try {
 			User user = inputDTO.convertToPojo();
-			user = baasIdService.saveUser(inputDTO.getDid(), user);
+			user = userService.save(user);
 			return ResponseEntity.status(HttpStatus.OK)
 					.header("Access-Control-Allow-Origin", "*")
 					.body(UserDTO.createDTO(user));
 		} 
-		catch (BizException e1) {
-			e1.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.header("Access-Control-Allow-Origin", "*")
-					.body(e1.getMessage());
-		}
 		catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -61,18 +54,11 @@ public class UserController {
 		}
 		
 		try {
-			User user = inputDTO.convertToPojo();
-			user = baasIdService.getUser(inputDTO.getDid());
+			User user = userService.getByDid(inputDTO.getDid());
 			return ResponseEntity.status(HttpStatus.OK)
 					.header("Access-Control-Allow-Origin", "*")
 					.body(UserDTO.createDTO(user));
 		} 
-		catch (BizException e1) {
-			e1.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.header("Access-Control-Allow-Origin", "*")
-					.body(e1.getMessage());
-		}
 		catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -91,17 +77,13 @@ public class UserController {
 		}
 		
 		try {
-			baasIdService.deleteUser(inputDTO.getDid());
+			User user = userService.getByDid(inputDTO.getDid());
+			user.setDeleted(true);
+			userService.save(user);
 			return ResponseEntity.status(HttpStatus.OK)
 					.header("Access-Control-Allow-Origin", "*")
 					.body(null);
 		} 
-		catch (BizException e1) {
-			e1.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.header("Access-Control-Allow-Origin", "*")
-					.body(e1.getMessage());
-		}
 		catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
