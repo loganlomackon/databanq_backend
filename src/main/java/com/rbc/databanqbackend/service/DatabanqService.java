@@ -32,6 +32,8 @@ public class DatabanqService {
 	private DeviceTransferHistoryService historyService;
 	@Autowired
 	private BaasIdService baasIdService;
+	@Autowired
+	private HttpClientService httpClientService;
 	
 	public UserDeviceDTO pairing(PairingDTO inputDTO) throws BizException, Exception {
 		String deviceDid = inputDTO.getDevice_did();
@@ -76,8 +78,9 @@ public class DatabanqService {
 			}
 			Gson gson = new Gson();
 			//TODO
-			//String txId = httpClientService.sendToBaasIdBlockChain(gson.toJson(toChainDTO));
-			String txId = null;
+			String txId = httpClientService.sendToBaasIdBlockChain(gson.toJson(toChainDTO));
+			System.out.println("txId:"+txId);
+			//String txId = null;
 			
 			//Create transfer history
 			DeviceTransferHistory history = new DeviceTransferHistory();
@@ -129,8 +132,9 @@ public class DatabanqService {
 		}
 		Gson gson = new Gson();
 		//TODO
-		//String txId = httpClientService.sendToBaasIdBlockChain(gson.toJson(toChainDTO));
-		String txId = null;
+		String txId = httpClientService.sendToBaasIdBlockChain(gson.toJson(toChainDTO));
+		System.out.println("txId:"+txId);
+		//String txId = null;
 		
 		//Create transfer history
 		DeviceTransferHistory history = new DeviceTransferHistory();

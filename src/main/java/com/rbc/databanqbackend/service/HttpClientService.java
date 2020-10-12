@@ -31,7 +31,7 @@ import com.rbc.databanqbackend.restful.dto.baasid.BaasIdBlockchainResDTO;
 @Service
 public class HttpClientService {
 	
-	private static final String BAASID_TEST_CHAIN_URL = "http://chain-test.baasid.com.tw:8585/iotapi/v1/blockchain/vcs";
+	private static final String BAASID_TEST_CHAIN_URL = "http://chain-test.baasid.com.tw/iotapi/v1/blockchain/vcs";
 	
 	public String sendPostForm(String path, Map<String, String> form) throws BizException,Exception {
 		return sendPostForm(path, new HashMap<String,String>(), form);
