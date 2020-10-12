@@ -1,4 +1,4 @@
-POST http://chain-test.baasid.com.tw:8585/iotapi/v1/blockchain/vcs <br/>
+POST http://chain-test.baasid.com.tw/iotapi/v1/blockchain/vcs <br/>
 Header required: <br/>
 Content-Type: application/json<br/>
 Host: <br/>
@@ -26,7 +26,7 @@ Response body: <br/>
 Note: <br/>
 Postman auto-generated header "Content-Length" is NOT compatible <br/>
 <br/>
-Get https://chain-test.baasid.com.tw/iotapi/v1/blockchain/vcs/{txId} <br/>
+Get http://chain-test.baasid.com.tw/iotapi/v1/blockchain/vcs/{txId} <br/>
 Request body: <br/>
 Response code: <br/>
 200		OK <br/>
