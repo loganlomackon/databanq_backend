@@ -77,9 +77,7 @@ public class UserController {
 		}
 		
 		try {
-			User user = userService.getByDid(inputDTO.getDid());
-			user.setDeleted(true);
-			userService.save(user);
+			userService.delete(inputDTO.getDid());
 			return ResponseEntity.status(HttpStatus.OK)
 					.header("Access-Control-Allow-Origin", "*")
 					.body(null);

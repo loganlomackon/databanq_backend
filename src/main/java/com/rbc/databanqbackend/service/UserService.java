@@ -16,11 +16,16 @@ public class UserService {
 	
 	@Transactional
 	public User getByDid(String did) {
-		return userRepository.findByDid(did);
+		return userRepository.findByDeletedFalseAndDid(did);
 	}
 	@Transactional
 	public User save(User user) {
 		return userRepository.save(user);
+	}
+	public void delete(String did) {
+		User user =  getByDid(did);
+		user.setDeleted(true);
+		user = save(user);
 	}
 	
 }

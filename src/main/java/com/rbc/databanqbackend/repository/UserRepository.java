@@ -7,5 +7,6 @@ import com.rbc.databanqbackend.domain.User;
 public interface UserRepository extends JpaRepository<User, Long> {
 
 	User findByDid(String did);
+	User findByDeletedFalseAndDid(String did);
 	
 }
