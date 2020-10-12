@@ -31,7 +31,7 @@ public class DatabanqService {
 	@Autowired
 	private DeviceTransferHistoryService historyService;
 	@Autowired
-	private HttpClientService httpClientService;
+	private BaasIdService baasIdService;
 	
 	public UserDeviceDTO pairing(PairingDTO inputDTO) throws BizException, Exception {
 		String deviceDid = inputDTO.getDevice_did();
@@ -86,6 +86,13 @@ public class DatabanqService {
 			history.setDevice(device);
 			history.setTxId(txId);
 			history = historyService.save(history);
+			
+			try {
+				baasIdService.saveDeviceTransferHistory(history);
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		UserDeviceDTO dto = new UserDeviceDTO();
@@ -133,6 +140,13 @@ public class DatabanqService {
 		history.setTransferDate(now);
 		history.setTxId(txId);
 		history = historyService.save(history);
+		
+		try {
+			baasIdService.saveDeviceTransferHistory(history);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 		
 		UserDeviceDTO dto = new UserDeviceDTO();
 		dto.setUser_did(toDid);

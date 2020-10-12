@@ -13,9 +13,11 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 import com.rbc.databanqbackend.domain.Device;
+import com.rbc.databanqbackend.domain.DeviceTransferHistory;
 import com.rbc.databanqbackend.domain.User;
 import com.rbc.databanqbackend.exception.BizException;
 import com.rbc.databanqbackend.restful.dto.DeviceDTO;
+import com.rbc.databanqbackend.restful.dto.DeviceTransferHistoryStorageDTO;
 import com.rbc.databanqbackend.restful.dto.UserDTO;
 import com.rbc.databanqbackend.restful.dto.baasid.BaasIdLoginResDTO;
 import com.rbc.databanqbackend.util.XmlUtil;
@@ -27,6 +29,7 @@ public class BaasIdService {
 	public static final String FOLDER_USER = "users";
 	public static final String FOLDER_DEVICE = "devices";
 	public static final String FOLDER_USER_DEVICE = "user_device";
+	public static final String FOLDER_DEVICE_TRANSFER_HISTORY = "device_transfer_history";
 
 	private static final String LOGIN_URL = "http://220.133.169.222:8080/auth/realms/dev/protocol/openid-connect/token";
 	public static final String BUCKET_URL = "http://220.133.169.222:19191";
@@ -154,6 +157,22 @@ public class BaasIdService {
 		return device;
 	}
 
+	//Save history 
+	public void saveDeviceTransferHistory(DeviceTransferHistory h) throws BizException, Exception {
+		String token = login();
+		DeviceTransferHistoryStorageDTO dto = DeviceTransferHistoryStorageDTO.createDTO(h);
+		
+		String path = BUCKET_URL + "/" + BUCKET_NAME + "/" + FOLDER_DEVICE_TRANSFER_HISTORY + "/";
+		File file = File.createTempFile(dto.getDevice_did()+"_"+dto.getTransfer_date(), ".json");
+		FileWriter myWriter = new FileWriter(file);
+		Gson gson = new Gson();
+		myWriter.write(gson.toJson(dto));
+		myWriter.close();
+		file.deleteOnExit();
+
+		uploadFile(token, path, file);
+	}
+	
 	public void deleteDevice(String did) throws BizException, Exception {
 		String token = login();
 		deleteDevice(token, did);
