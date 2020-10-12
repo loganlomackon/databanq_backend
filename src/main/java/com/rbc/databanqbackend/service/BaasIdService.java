@@ -161,9 +161,10 @@ public class BaasIdService {
 	public void saveDeviceTransferHistory(DeviceTransferHistory h) throws BizException, Exception {
 		String token = login();
 		DeviceTransferHistoryStorageDTO dto = DeviceTransferHistoryStorageDTO.createDTO(h);
+		String fileName = dto.getDevice_did()+"_"+dto.getTransfer_date()+".json";
 		
-		String path = BUCKET_URL + "/" + BUCKET_NAME + "/" + FOLDER_DEVICE_TRANSFER_HISTORY + "/";
-		File file = File.createTempFile(dto.getDevice_did()+"_"+dto.getTransfer_date(), ".json");
+		String path = BUCKET_URL + "/" + BUCKET_NAME + "/" + FOLDER_DEVICE_TRANSFER_HISTORY + "/" + fileName;
+		File file = File.createTempFile(fileName, ".json");
 		FileWriter myWriter = new FileWriter(file);
 		Gson gson = new Gson();
 		myWriter.write(gson.toJson(dto));
@@ -171,6 +172,14 @@ public class BaasIdService {
 		file.deleteOnExit();
 
 		uploadFile(token, path, file);
+	}
+	public void deleteHistory(DeviceTransferHistory h) throws BizException, Exception {
+		DeviceTransferHistoryStorageDTO dto = DeviceTransferHistoryStorageDTO.createDTO(h);
+		String path = BUCKET_URL + "/" + BUCKET_NAME + "/" + FOLDER_DEVICE_TRANSFER_HISTORY + "/" + 
+				dto.getDevice_did()+"_"+dto.getTransfer_date()+".json";
+		
+		String token = login();
+		deleteFile(token, path);
 	}
 	
 	public void deleteDevice(String did) throws BizException, Exception {
