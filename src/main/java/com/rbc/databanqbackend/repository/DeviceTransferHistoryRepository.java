@@ -10,9 +10,10 @@ import com.rbc.databanqbackend.domain.User;
 
 public interface DeviceTransferHistoryRepository extends JpaRepository<DeviceTransferHistory, Long> {
 
-	List<DeviceTransferHistory> findByToUser(User toUser);
-	List<DeviceTransferHistory> findByDevice(Device device);
-	DeviceTransferHistory findFirstByToUserAndDeviceOrderByIdDesc(User toUser, Device device);
-	List<DeviceTransferHistory> findByDeviceAndIdLessThanEqual(Device device, Long id);
-	DeviceTransferHistory findFirstByDeviceOrderByIdDesc(Device device);
+	List<DeviceTransferHistory> findByDeletedFalse();
+	List<DeviceTransferHistory> findByDeletedFalseAndToUser(User toUser);
+	List<DeviceTransferHistory> findByDeletedFalseAndDevice(Device device);
+	DeviceTransferHistory findFirstByDeletedFalseAndToUserAndDeviceOrderByIdDesc(User toUser, Device device);
+	List<DeviceTransferHistory> findByDeletedFalseAndDeviceAndIdLessThanEqual(Device device, Long id);
+	DeviceTransferHistory findFirstByDeletedFalseAndDeviceOrderByIdDesc(Device device);
 }

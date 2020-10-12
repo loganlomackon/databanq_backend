@@ -8,6 +8,7 @@ import com.rbc.databanqbackend.domain.Device;
 
 public interface DeviceRepository extends JpaRepository<Device, Long> {
 
-	Device findByDid(String did);
+	List<Device> findByDeletedFalse();
+	Device findByDidAndDeletedFalse(String did);
 	
 }

@@ -19,26 +19,34 @@ public class DeviceTransferHistoryService {
 	private DeviceTransferHistoryRepository historyRepository;
 	
 	@Transactional
+	public List<DeviceTransferHistory> getAll() {
+		return historyRepository.findByDeletedFalse();
+	}
+	@Transactional
 	public List<DeviceTransferHistory> getByToUser(User user) {
-		return historyRepository.findByToUser(user);
+		return historyRepository.findByDeletedFalseAndToUser(user);
 	}
 	@Transactional
 	public List<DeviceTransferHistory> getByDevice(Device device) {
-		return historyRepository.findByDevice(device);
+		return historyRepository.findByDeletedFalseAndDevice(device);
 	}
 	@Transactional
 	public DeviceTransferHistory save(DeviceTransferHistory history) {
 		return historyRepository.save(history);
 	}
 	@Transactional
+	public List<DeviceTransferHistory> save(List<DeviceTransferHistory> hs) {
+		return historyRepository.saveAll(hs);
+	}
+	@Transactional
 	public List<DeviceTransferHistory> getByUserAndDevice(User toUser, Device device) {
-		DeviceTransferHistory last = historyRepository.findFirstByToUserAndDeviceOrderByIdDesc(toUser, device);
-		List<DeviceTransferHistory> history = historyRepository.findByDeviceAndIdLessThanEqual(device, last.getId());
+		DeviceTransferHistory last = historyRepository.findFirstByDeletedFalseAndToUserAndDeviceOrderByIdDesc(toUser, device);
+		List<DeviceTransferHistory> history = historyRepository.findByDeletedFalseAndDeviceAndIdLessThanEqual(device, last.getId());
 		return history;
 	}
 	@Transactional
 	public User getDeviceOwner(Device device) {
-		DeviceTransferHistory last = historyRepository.findFirstByDeviceOrderByIdDesc(device);
+		DeviceTransferHistory last = historyRepository.findFirstByDeletedFalseAndDeviceOrderByIdDesc(device);
 		return last.getToUser();
 	}
 	
