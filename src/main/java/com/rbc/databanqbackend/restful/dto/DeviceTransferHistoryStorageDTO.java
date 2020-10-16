@@ -18,7 +18,7 @@ public class DeviceTransferHistoryStorageDTO {
 	public static DeviceTransferHistoryStorageDTO createDTO(DeviceTransferHistory h) {
 		DeviceTransferHistoryStorageDTO dto = new DeviceTransferHistoryStorageDTO();
 		dto.setDevice_did(h.getDevice().getDid());
-		dto.setTransfer_date(DateUtil.convertDateToDayString(h.getTransferDate()));
+		dto.setTransfer_date(String.valueOf(h.getTransferDate().getTime()));
 		dto.setTx_id(h.getTxId());
 		if (h.getFromUser() != null) {
 			dto.setFrom_user_did(h.getFromUser().getDid());
