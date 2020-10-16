@@ -101,6 +101,11 @@ public class TestController {
 			List<User> users = userService.getAll();
 			for (User user : users) {
 				user.setDeleted(true);
+				try {
+					baasIdService.deleteUser(user.getDid());
+				}
+				catch (Exception e) {
+				}
 			}
 			userService.save(users);
 

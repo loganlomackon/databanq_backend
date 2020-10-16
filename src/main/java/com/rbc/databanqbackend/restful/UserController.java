@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.rbc.databanqbackend.domain.User;
 import com.rbc.databanqbackend.restful.dto.UserDTO;
+import com.rbc.databanqbackend.service.BaasIdService;
 import com.rbc.databanqbackend.service.UserService;
 
 @RestController
@@ -19,6 +20,8 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private BaasIdService baasIdService;
 	
 	@RequestMapping(value="/signup", method=RequestMethod.POST)
 	@ResponseBody
@@ -32,6 +35,7 @@ public class UserController {
 		try {
 			User user = inputDTO.convertToPojo();
 			user = userService.save(user);
+			baasIdService.saveUser(user.getDid(), user);
 			return ResponseEntity.status(HttpStatus.OK)
 					.header("Access-Control-Allow-Origin", "*")
 					.body(UserDTO.createDTO(user));
